@@ -1,0 +1,64 @@
+#Ezgi Uslu 170709047
+#question 1
+import os
+child= os.fork()
+if child==0:
+  print("ID of child proc:", os.getpid())
+
+
+#question 2
+
+import os
+import requests
+import uuid
+
+url=["http://wiki.netseclab.mu.edu.tr/images/thumb/f/f7/MSKU-BlockchainResearchGroup. jpeg/300px-MSKU-BlockchainResearchGroup.jpeg", "https://upload.wikimedia.org/wikipedia/tr/9/98/Mu%C4%9Fla_S%C4%B1tk%C4%B1 Ko%C3%A7man%C3%9Cniversitesi_logo.png", "​https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Hawai%27i.jpg/1024pxHawai%27i.jpg​", "​http://wiki.netseclab.mu.edu.tr/images/thumb/f/f7/MSKU-BlockchainResearchGroup.j peg/300px-MSKU-BlockchainResearchGroup.jpeg​", "​https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Hawai%27i.jpg/1024pxHawai%27i.jpg​"] 
+
+
+def dowload_file(url,file_name=None):
+  r=requests.get(url,allow_redirects=True)
+  file=file_name if file_name else str(uuid.uuid())
+  open(file,'wb').write(r.content)
+
+  for u in url:
+    dowload_file(u,file_name=None)
+
+
+#question 3
+#Wait function is used to stop execution of a parent process until some of its child processes are exited or stopped.
+child = os.fork()
+print("parent id",os.getpid())
+if child==0:
+  print("ping -c 5 8.8.8.8")
+  os._exit(0)
+
+os.system("ping -c 2 1.1.1.1")
+print("here is parent proc")
+os.wait()
+
+#question 4
+
+import sys
+import os
+import hashlib
+from collections import defaultdict
+
+searchdirpath = sys.argv[1]
+
+size_map = defaultdict(list)
+
+def getFileHashMD5(filename):
+    m = hashlib.md5()
+    with open(filename, 'rb', 1024*1024) as fh:
+          while True:
+            data = fh.read(1024*1024)
+            if not data:
+                break
+            m.update(data)
+    return m.hexdigest()
+
+# group files by size
+for dirname, dirnames, filenames in os.walk(searchdirpath):
+    for filename in filenames:
+        fullname = os.path.join(dirname, filename)
+        size_map[os.stat(fullname).st_size].append(fullname)
